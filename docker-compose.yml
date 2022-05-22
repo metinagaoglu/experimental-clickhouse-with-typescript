@@ -1,0 +1,16 @@
+version: '2'
+services:
+  alpine:
+    image: alpine
+    tty: true
+    volumes:
+      - './backend/:/app/'
+    ports:
+      - '3000:3000'
+  clickhouse:
+    image: yandex/clickhouse-server
+    ports:
+     - '8123:8123'
+    environment:
+      TCP_PORT: 9000
+      HTTP_PORT: 8123

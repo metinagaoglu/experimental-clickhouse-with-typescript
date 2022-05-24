@@ -98,7 +98,7 @@ class App {
   }
 
   private initializeConnection() {
-    ClickhouseClient = new ClickhouseClient('clickhouse', 9000);
+ /*   ClickhouseClient = new ClickhouseClient('clickhouse', 9000);
     ClickhouseClient.execute('SELECT * FROM uk_price_paid')
       .then(() => {
         logger.info('Clickhouse connection established');
@@ -111,7 +111,7 @@ class App {
       console.log(res)
     }).catch(() => {
       logger.error('Clickhouse schema creation failed');
-    });
+    });*/
 
   }
 

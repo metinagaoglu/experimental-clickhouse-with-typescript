@@ -2,6 +2,9 @@ import { ClickHouse } from 'clickhouse';
 import schema from './migrations/uk_price_paid';
 
 class ClickhouseClient {
+  query(query: string) {
+    throw new Error('Method not implemented.');
+  }
   private client: ClickHouse;
 
   constructor(url: string, port: number) {
@@ -22,11 +25,7 @@ class ClickhouseClient {
   }
 
   public async execute(query: string): Promise<any> {
-    return this.client.query(query);
-  }
-
-  public async migrate(): Promise<any> {
-    return this.client.query(schema);
+    return this.client.query(query).toPromise();
   }
 
 }

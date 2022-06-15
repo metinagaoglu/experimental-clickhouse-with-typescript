@@ -6,6 +6,10 @@ class UkPricePaidService {
   public async fetchAvaragePricePerYear() {
     return await this.repository.fetchAvaragePricePerYear();
   }
+
+  public async fetchAvaragePriceByTown() {
+    return await this.repository.fetchAvaragePriceByTown();
+  }
 }
 
 export default UkPricePaidService;

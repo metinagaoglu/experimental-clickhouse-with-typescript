@@ -7,8 +7,14 @@ export class UKPricePaidReportController {
   public UkPricePaidService = new UkPricePaidService();
 
   @Get('/ukpricepaid/report')
-  @OpenAPI({ summary: 'Return a list of users' })
+  @OpenAPI({ summary: 'Return a list of avg price of towns' })
   index() {
     return this.UkPricePaidService.fetchAvaragePricePerYear();
+  }
+
+  @Get('/ukpricepaid/report/bytown')
+  @OpenAPI({ summary: 'Return a list of avg price by towwns' })
+  byTown() {
+    return this.UkPricePaidService.fetchAvaragePriceByTown();
   }
 }

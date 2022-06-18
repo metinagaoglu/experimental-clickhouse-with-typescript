@@ -1,67 +1,40 @@
 import ClickhouseClient from '@/connections/ClickhouseClient';
+import { knex } from 'knex';
 
 class UkPricePaidRepository {
   //TODO: use enviroment variables for connection
   public connection: ClickhouseClient = new ClickhouseClient('clickhouse', 8123);
 
-  /*
-SELECT AVG(price) as pr,month,year FROM (
-  SELECT 
-   AVG(price) as price,
-   toMonth(date) as month,
-   toYear(date) as year
-  FROM clickhouseSample.uk_price_paid
-  GROUP BY date
-) as t
-GROUP BY month,year
-ORDER BY pr DESC
-*/
+  public knexInstance = knex({ client: 'pg', connection: {} });
+
   public async fetchAvaragePricePerYear(): Promise<any> {
-    const query = `SELECT AVG(price) as pr,month,year FROM (
-      SELECT 
-       AVG(price) as price,
-       toMonth(date) as month,
-       toYear(date) as year
-      FROM clickhouseSample.uk_price_paid
-      GROUP BY date
-    ) as t
-    GROUP BY month,year
-    ORDER BY pr DESC`;
+    const query = this.knexInstance()
+      .avg('price as price')
+      .column([this.knexInstance.raw('toMonth(date) as month'), this.knexInstance.raw('toYear(date) as year')])
+      .select()
+      .from('clickhouseSample.uk_price_paid')
+      .groupByRaw('month,year')
+      .orderBy('price')
+      .toString();
 
     return await this.connection.execute(query);
   }
 
-  /*
-  SELECT
-      town,
-      district,
-      count() AS c,
-      round(avg(price)) AS price,
-      bar(price, 0, 5000000, 100)
-  FROM clickhouseSample.uk_price_paid
-  WHERE date >= '2019-01-01' AND date <= '2020-01-01'
-  GROUP BY
-      town,
-      district
-  HAVING c >= 100
-  ORDER BY price DESC
-  OFFSET 15 ROW FETCH FIRST 5 ROWS ONLY;
-   */
   public async fetchAvaragePriceByTown() {
-    const query = `
-      SELECT
-      town,
-      district,
-      count() AS c,
-      round(avg(price)) AS price
-  FROM clickhouseSample.uk_price_paid
-  WHERE date >= '2019-01-01' AND date <= '2020-01-01'
-  GROUP BY
-      town,
-      district
-  HAVING c >= 100
-  ORDER BY price DESC
-  OFFSET 15 ROW FETCH FIRST 5 ROWS ONLY;`;
+    const query = this.knexInstance()
+      .column([
+        this.knexInstance.raw('town'),
+        this.knexInstance.raw('district'),
+        this.knexInstance.raw('count() as total'),
+        this.knexInstance.raw('round(avg(price)) AS price')
+      ])
+      .select()
+      .from('clickhouseSample.uk_price_paid')
+      .groupByRaw('town,district')
+      .having('total', '>=', '100')
+      .orderBy('price', 'DESC')
+      .limit(50)
+      .toString();
 
     return await this.connection.execute(query);
   }

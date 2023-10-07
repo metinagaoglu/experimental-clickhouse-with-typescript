@@ -1,4 +1,4 @@
-# click-house-olap-typescript
+# experimental-clickhouse-with-typescript
 
 This is an experimental TypeScript project for performing Online Analytical Processing (OLAP) operations with the ClickHouse database.
 
